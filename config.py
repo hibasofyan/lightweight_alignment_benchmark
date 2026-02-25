@@ -1,5 +1,5 @@
 config = {
-    "tasks": ["flickr30k"], # dataset_name
+    "tasks": ["n24news"], 
     "methods": ["asif", "csa"],  # Method to use: "asif", "csa", or "cka"
     "csa":{
         "sim_dim": 250,
@@ -15,6 +15,22 @@ config = {
     },
     "support_embeddings": None,
 
+  
+    "n24news": {
+        "dataset_path": "/kaggle/input/datasets/ritabrata123/n24news-zip", 
+        "hf_img_embedding_name": "n24news_dinov2_giant_image_embeddings.pkl", 
+        "hf_text_embedding_name": "n24news_gtr_t5_large_text_embeddings.pkl", 
+        "hf_repo_id": "Hiba03/n24news-embeddings", 
+        "train_test_ratio": 0.8,
+        "seed": 42,
+        "split": "train",
+        "num_caption_per_image": 1, 
+        "num_image_per_caption": 1,
+        "generate_embedding": True, 
+        "metatask": "retrieval", 
+    },
+
+
     "imagenet1k": {
         "root": "/home/rida.lefdali/work/ImageNet/val",
         "loc_val_solution": "/home/rida.lefdali/work/ImageNet/LOC_val_solution.csv",
@@ -26,7 +42,7 @@ config = {
         "seed": 42,
         "split": "large",
         "generate_embedding": False,
-        "metatask": "classification", # only "classification"
+        "metatask": "classification", 
     },
     "flickr30k": {
         "dataset_path": "/home/rida.lefdali/work/dataset/flickr30k",
@@ -39,7 +55,7 @@ config = {
         "num_caption_per_image": 5,
         "num_image_per_caption": 1,
         "generate_embedding": False,
-        "metatask": "retrieval", # only "retrieval"
+        "metatask": "retrieval", 
     },
     "mscoco": {
         "data_path": "",
@@ -52,8 +68,10 @@ config = {
         "num_caption_per_image": 5,
         "num_image_per_caption": 1,
         "generate_embedding": True,
-        "metatask": "retrieval", # "classification" or  "retrieval"
+        "metatask": "retrieval", 
     },
+    
+  
     "embedding_model": {
         "img_encoder": "dinov2", 
         "text_encoder": "gtr_t5", 
