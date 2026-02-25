@@ -1,5 +1,3 @@
-# Defer loader import to avoid circular dependency
-# from .loader import load_dataset_task  # -> moved to bottom
 
 from typing import Type, Dict
 import logging
@@ -18,10 +16,13 @@ from datasets.mscoco.mscoco_multilabel_classification_dataset import (
     MScocoMultiLabelClassificationDataset, 
     MScocoRetrievalDataset
 )
+# Add your new N24News import here:
+from datasets.n24news.n24news_retrieval_dataset import (
+    N24NewsRetrievalDataset,
+)
 
 logger = logging.getLogger(__name__)
 
-# Registry dictionary mapping names to classes
 # Registry dictionary mapping names to classes
 _DATASET_REGISTRY: Dict[str, Type[DatasetBase]] = {
     # Classification Datasets
@@ -31,12 +32,14 @@ _DATASET_REGISTRY: Dict[str, Type[DatasetBase]] = {
     # Retrieval Datasets
     "flickr30k-retrieval": Flickr30kRetrievalDataset,
     "mscoco-retrieval": MScocoRetrievalDataset,
+    "n24news-retrieval": N24NewsRetrievalDataset, # Added N24News
 
     # Embedding Generation Datasets (mapped to same classes, logic inside class handles generation mode)
     "imagenet1k-classification-embedding": Imagenet1kZeroshotClassificationDataset,
     "flickr30k-retrieval-embedding": Flickr30kRetrievalDataset,
     "mscoco-retrieval-embedding": MScocoRetrievalDataset,
     "mscoco-classification-embedding": MScocoMultiLabelClassificationDataset,
+    "n24news-retrieval-embedding": N24NewsRetrievalDataset, # Added N24News for embeddings
 }
 
 def get_dataset_class(name: str) -> Type[DatasetBase]:
