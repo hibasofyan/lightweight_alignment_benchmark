@@ -11,12 +11,13 @@ class N24News(DatasetBase):
         self.load_data(dataset_path)
 
     def load_data(self, dataset_path: str) -> None:
-        json_path = Path(dataset_path) / 'nytimes_dataset.json'
+        json_path = Path(dataset_path) / "news" / "nytimes_dataset.json"
         table = pl.read_json(json_path)
      
         table = table.with_columns(
             pl.col("image_id").map_elements(
-                lambda x: str(Path(dataset_path) / "images" / f"{x}.jpg"), return_dtype=pl.String
+                # CHANGED "images" to "imgs" here:
+                lambda x: str(Path(dataset_path) / "imgs" / f"{x}.jpg"), return_dtype=pl.String
             ).alias("image_path")
         )
         
