@@ -3,6 +3,7 @@ from typing import Any, Dict, List
 from base.base import AbsTask, AbsModel, AbsMethod
 import torch 
 from tqdm import tqdm
+
 class RetrievalTask(AbsTask):
     """Task for retrieval evaluation (e.g., Image-Text retrieval)."""
     
@@ -14,7 +15,6 @@ class RetrievalTask(AbsTask):
         self.support_embeddings = support_embeddings
         self.topk = topk
         self.num_gt = num_gt
-
 
     def run(self, method: AbsMethod, support_embeddings: Dict[str, np.ndarray] = None, **kwargs) -> Dict[str, Any]:
         """Run retrieval using the provided alignment method."""
@@ -44,8 +44,14 @@ class RetrievalTask(AbsTask):
             for idx in tqdm(range(aligned_queries.shape[0])):
                 gt_query_ids = self.gt_ids[idx]
                 q_emb = aligned_queries[idx, :].reshape(1, -1)
+                
                 sim_scores = similarity_function(q_emb, aligned_documents)
+                
                 # Get topk indices
+                # Note: Converting to tensor safely just in case similarity_function returned a numpy array
+                if not isinstance(sim_scores, torch.Tensor):
+                    sim_scores = torch.tensor(sim_scores)
+                    
                 sim_top_idx = torch.topk(sim_scores, self.topk, largest=True, sorted=True).indices.cpu().numpy()
                 hit = np.zeros(self.topk)
                 for jj, top_idx in enumerate(sim_top_idx):
@@ -65,9 +71,12 @@ class RetrievalTask(AbsTask):
             
         avg_precisions = np.array(precisions).mean(axis=0)
         avg_recalls = np.array(recalls).mean(axis=0)
+        
         return {
             "p@1": avg_precisions[0],
+            "p@3": avg_precisions[2] if self.topk >= 3 else None, # Added P@3
             "p@5": avg_precisions[4] if self.topk >= 5 else None,
             "r@1": avg_recalls[0],
+            "r@3": avg_recalls[2] if self.topk >= 3 else None, # Added R@3
             "r@5": avg_recalls[4] if self.topk >= 5 else None,
         }
